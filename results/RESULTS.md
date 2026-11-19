@@ -238,8 +238,7 @@ Source: `results/exp8_results.json`, `results/exp8_convergence.png`.
 
 ## Not reproduced
 
-Nothing required by the selected experiments is entirely missing: every
-table, figure and numerical check listed under "research objectives" and
-"expected outcomes" for experiments 1-8 has a corresponding computed value
-above. The items listed under "Deviations from the paper" are differences in
-accuracy or timing, not omissions.
+Nothing covered by experiments 1-8 is entirely missing: every table, figure
+and numerical check reproduced above has a corresponding computed value. The
+items listed under "Deviations from the paper" are differences in accuracy
+or timing, not omissions.
