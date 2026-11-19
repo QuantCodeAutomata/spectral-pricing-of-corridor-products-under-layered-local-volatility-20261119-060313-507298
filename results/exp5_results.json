@@ -53,32 +53,32 @@
     "M": 4,
     "rho0": 0.0,
     "rho1": 0.0,
-    "time_s": 3.8566650140001,
+    "time_s": 3.8061860469997555,
     "expected_max_abs_diff_paper": 2.1e-11
   },
   "general_configuration": {
-    "K1=16": {
-      "cdf_at_0.5": 0.6219002543073046,
-      "accrual_call": 0.064034133281596
-    },
-    "K1=32": {
-      "cdf_at_0.5": 0.6218968148566821,
-      "accrual_call": 0.06403302447647086
-    },
     "K1=64": {
       "cdf_at_0.5": 0.621899438795019,
       "accrual_call": 0.06403311156254787
     },
-    "characteristic_array_time_s": 15.241419049999422,
-    "K1_max": 64,
+    "K1=128": {
+      "cdf_at_0.5": 0.6219009073174959,
+      "accrual_call": 0.06403313388047671
+    },
+    "K1=256": {
+      "cdf_at_0.5": 0.6219010296354099,
+      "accrual_call": 0.0640331352531831
+    },
+    "characteristic_array_time_s": 163.57955741800015,
+    "K1_max": 256,
     "K1_max_paper": 256,
     "M": 4,
     "rho0": 0.0,
     "rho1": 2.537256085130253e-06
   },
   "general_configuration_convergence": {
-    "cdf_change_32_to_64": 2.6239383368320546e-06,
-    "accrual_call_change_32_to_64": 8.708607701635174e-08,
+    "cdf_change_128_to_256": 1.223179140197317e-07,
+    "accrual_call_change_128_to_256": 1.3727063929991346e-09,
     "expected_cdf_change_paper_128_to_256": 2.4e-07,
     "expected_call_change_paper_128_to_256": 4e-10
   }

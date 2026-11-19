@@ -161,11 +161,12 @@ def main():
     results["general_configuration"]["rho0"] = rho0_g
     results["general_configuration"]["rho1"] = rho1_g
 
-    diff_cdf = abs(cdf_vals[64] - cdf_vals[32])
-    diff_call = abs(call_vals[64] - call_vals[32])
+    K1_prev, K1_last = K1_list[-2], K1_list[-1]
+    diff_cdf = abs(cdf_vals[K1_last] - cdf_vals[K1_prev])
+    diff_call = abs(call_vals[K1_last] - call_vals[K1_prev])
     results["general_configuration_convergence"] = {
-        "cdf_change_32_to_64": diff_cdf,
-        "accrual_call_change_32_to_64": diff_call,
+        f"cdf_change_{K1_prev}_to_{K1_last}": diff_cdf,
+        f"accrual_call_change_{K1_prev}_to_{K1_last}": diff_call,
         "expected_cdf_change_paper_128_to_256": 2.4e-7,
         "expected_call_change_paper_128_to_256": 4.0e-10,
     }

@@ -96,13 +96,15 @@ Source: `results/exp5_results.json`.
   (1-CDF(a)) da`); absolute difference 2.0e-12 (paper reports 3.9e-13 for
   `M=4, K1=64`). **Reproduced** (same order of magnitude).
 * General configuration (`r = 0`): CDF at `a = 0.5` and the accrual Call price
-  are reported for `K1 = 16, 32, 64` with `M = 4`; the change from `K1 = 32`
-  to `64` is 2.6e-6 (CDF) and 8.7e-8 (accrual Call), against the paper's
-  reported change of 2.4e-7 and 4e-10 between `K1 = 128` and `256`.
-  **Partially reproduced**: the direction and algebraic decay rate of the
-  endpoint-corrected expansion are confirmed, and the residual gap is
-  consistent with using half the paper's `K1` (128 vs. 256) under the time
-  limit of the replication (see "Deviations from the paper").
+  are reported for `K1 = 64, 128, 256` with `M = 4` (the paper's own grid,
+  obtained with `python -m exp.exp5_accrual_law --full`). The change from
+  `K1 = 128` to `256` is 1.22e-7 (CDF) and 1.37e-9 (accrual Call), against the
+  paper's reported change of 2.4e-7 and 4e-10 over the same doubling.
+  **Partially reproduced**: the CDF change is within a factor of 2 of the
+  paper's figure and the accrual-Call change is within a factor of 3.4,
+  confirming the same algebraic decay of the endpoint-corrected expansion as
+  `K1` doubles, while the exact magnitudes differ by less than one order of
+  magnitude.
 
 ## Experiment 6 — Greeks and layer vegas via complex-step differentiation
 
@@ -204,16 +206,14 @@ Source: `results/exp8_results.json`, `results/exp8_convergence.png`.
   (least-squares fit of the asymptotic coefficients `a_m`, `b_m` for
   `m < M` from the computed `Xi_k` at `K1/2 <= k <= K1`, and the corrected
   expansion Eq. (55)), reaching the paper's 1e-11 accuracy on the two-layer
-  configuration with `M = 4`, `K1 = 64`. On the ten-layer general
-  configuration the run is capped at `K1 = 64` instead of the paper's
-  `K1 = 256` because each Talbot-contour evaluation costs more per node than
-  the paper's reference implementation and the full grid would not finish
-  inside the time available for this replication; run
-  `python -m exp.exp5_accrual_law --full` for `K1 = 256` (estimated several
-  minutes). The internal convergence check (`K1` doubling from 32 to 64)
-  confirms the expected algebraic decay of the corrected series, one order of
-  magnitude above the paper's 128-to-256 change, consistent with using half
-  the paper's mode count.
+  configuration with `M = 4`, `K1 = 64`. The ten-layer general configuration
+  was run at the paper's own `K1 = 256` via `python -m exp.exp5_accrual_law
+  --full` (about 165 seconds for the characteristic-function array on this
+  machine); the default invocation without `--full` still caps `K1` at 64 for
+  a quick smoke run. At `K1 = 256`, the `K1 = 128 -> 256` change in the CDF
+  and accrual Call (1.22e-7, 1.37e-9) is within a factor of 2-3.4 of the
+  paper's reported change (2.4e-7, 4.0e-10) over the same doubling,
+  confirming the algebraic decay of the corrected expansion.
 * Experiment 6's finite-difference reference vegas were computed with a
   single central-difference step size that was not separately tuned to
   balance truncation and round-off error for each layer; this widens the
