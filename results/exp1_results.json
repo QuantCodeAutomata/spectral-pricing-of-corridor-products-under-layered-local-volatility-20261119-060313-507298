@@ -1,0 +1,118 @@
+{
+  "check_a_image_formula": [
+    {
+      "T": 0.1,
+      "spectral_N1": 1.0000000000000002,
+      "image_formula": 1.0000000000000004,
+      "abs_diff": 2.220446049250313e-16
+    },
+    {
+      "T": 1.0,
+      "spectral_N1": 0.9999999999999978,
+      "image_formula": 0.9999999999999978,
+      "abs_diff": 0.0
+    },
+    {
+      "T": 5.0,
+      "spectral_N1": 0.9993067612977308,
+      "image_formula": 0.9993067612977308,
+      "abs_diff": 0.0
+    }
+  ],
+  "check_b_homogeneous_split": [
+    {
+      "n_layers": 1,
+      "notouch": 0.9999999999999978,
+      "diff_vs_N1": 0.0
+    },
+    {
+      "n_layers": 2,
+      "notouch": 0.9999999999999977,
+      "diff_vs_N1": 1.1102230246251565e-16
+    },
+    {
+      "n_layers": 5,
+      "notouch": 0.9999999999999978,
+      "diff_vs_N1": 0.0
+    }
+  ],
+  "check_c_equal_vs_general": [
+    {
+      "T": 0.1,
+      "payoff": "notouch",
+      "equal_slw_price": 0.9979943574940924,
+      "general_slw_price": 0.997994357494096,
+      "abs_diff": 3.6637359812630166e-15,
+      "general_n_modes": 30
+    },
+    {
+      "T": 0.1,
+      "payoff": "call",
+      "equal_slw_price": 1.8273880685435098,
+      "general_slw_price": 1.8273880685433226,
+      "abs_diff": 1.871836019518014e-13,
+      "general_n_modes": 30
+    },
+    {
+      "T": 0.1,
+      "payoff": "put",
+      "equal_slw_price": 0.8295260118418836,
+      "general_slw_price": 0.8295260118422431,
+      "abs_diff": 3.594902153736257e-13,
+      "general_n_modes": 30,
+      "time_equal_slw_basis_s": 0.6665282249450684
+    },
+    {
+      "T": 1.0,
+      "payoff": "notouch",
+      "equal_slw_price": 0.7679500848618996,
+      "general_slw_price": 0.7679500848619302,
+      "abs_diff": 3.0531133177191805e-14,
+      "general_n_modes": 13
+    },
+    {
+      "T": 1.0,
+      "payoff": "call",
+      "equal_slw_price": 2.264897090289305,
+      "general_slw_price": 2.2648970902896903,
+      "abs_diff": 3.8546943414985435e-13,
+      "general_n_modes": 13
+    },
+    {
+      "T": 1.0,
+      "payoff": "put",
+      "equal_slw_price": 2.056401845959601,
+      "general_slw_price": 2.0564018459595785,
+      "abs_diff": 2.2648549702353193e-14,
+      "general_n_modes": 13,
+      "time_equal_slw_basis_s": 0.2888026237487793
+    },
+    {
+      "T": 5.0,
+      "payoff": "notouch",
+      "equal_slw_price": 0.13078205195514678,
+      "general_slw_price": 0.13078205195513296,
+      "abs_diff": 1.3822276656583199e-14,
+      "general_n_modes": 9
+    },
+    {
+      "T": 5.0,
+      "payoff": "call",
+      "equal_slw_price": 0.3716037753156392,
+      "general_slw_price": 0.3716037753155708,
+      "abs_diff": 6.838973831690964e-14,
+      "general_n_modes": 9
+    },
+    {
+      "T": 5.0,
+      "payoff": "put",
+      "equal_slw_price": 0.37158013221832104,
+      "general_slw_price": 0.371580132218293,
+      "abs_diff": 2.8033131371785203e-14,
+      "general_n_modes": 9,
+      "time_equal_slw_basis_s": 0.2029886245727539
+    }
+  ],
+  "omega_common": 0.42426406871192857,
+  "omega_expected": 0.4243
+}
