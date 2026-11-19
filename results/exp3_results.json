@@ -1,0 +1,46 @@
+{
+  "laplace_vs_spectral": [
+    {
+      "T": 0.1,
+      "n_talbot_nodes": 32,
+      "spectral_n_modes": 32,
+      "notouch_spectral": 0.9980016155914487,
+      "notouch_laplace": 0.998001615591307,
+      "notouch_abs_diff": 1.417754802446325e-13,
+      "notouch_time_s": 0.5578655799999979,
+      "call_spectral": 1.7825298181664435,
+      "call_laplace": 1.7825298181667466,
+      "call_abs_diff": 3.0309088572266774e-13,
+      "call_time_s": 0.5612830509999185
+    },
+    {
+      "T": 1.0,
+      "n_talbot_nodes": 32,
+      "spectral_n_modes": 14,
+      "notouch_spectral": 0.819596756783893,
+      "notouch_laplace": 0.8195967567837692,
+      "notouch_abs_diff": 1.2378986724570495e-13,
+      "notouch_time_s": 0.5964380479999818,
+      "call_spectral": 2.80721834150678,
+      "call_laplace": 2.80721834150704,
+      "call_abs_diff": 2.602362769721367e-13,
+      "call_time_s": 0.580165687999397
+    },
+    {
+      "T": 5.0,
+      "n_talbot_nodes": 32,
+      "spectral_n_modes": 9,
+      "notouch_spectral": 0.17993664658234704,
+      "notouch_laplace": 0.17993664658218994,
+      "notouch_abs_diff": 1.5709655798445965e-13,
+      "notouch_time_s": 0.5807812829998511,
+      "call_spectral": 0.6267747125508121,
+      "call_laplace": 0.6267747125502848,
+      "call_abs_diff": 5.272449143944868e-13,
+      "call_time_s": 0.5617181480001818
+    }
+  ],
+  "expected_agreement": 6e-13,
+  "expected_time_ms_per_price_paper": 2.0,
+  "note_on_timing": "This Python implementation integrates each layer's payoff piece against the Laplace-transformed density with Gauss-Legendre quadrature rather than the paper's closed-form elementary antiderivatives (Section 4), so measured timings are slower than the paper's ~2 ms per price; see results/RESULTS.md."
+}

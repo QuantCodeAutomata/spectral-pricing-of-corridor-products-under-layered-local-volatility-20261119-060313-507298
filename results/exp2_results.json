@@ -1,0 +1,81 @@
+{
+  "check_a_eigenvalue_counting": {
+    "n_modes_checked": 40,
+    "max_relative_error": 1.2930258035761065e-13,
+    "mean_relative_error": 3.1304719380528716e-14,
+    "expected_max_relative_error": 3.8e-15
+  },
+  "check_b_general_configuration": [
+    {
+      "T": 0.1,
+      "n_modes": 32,
+      "notouch": 0.9980016155914487,
+      "call": 1.7825298181664435,
+      "put": 0.7845270323552318
+    },
+    {
+      "T": 1.0,
+      "n_modes": 14,
+      "notouch": 0.819596756783893,
+      "call": 2.80721834150678,
+      "put": 1.9659999308638227
+    },
+    {
+      "T": 5.0,
+      "n_modes": 9,
+      "notouch": 0.17993664658234704,
+      "call": 0.6267747125508121,
+      "put": 0.4417483703297136
+    }
+  ],
+  "reference_comparison_T1": {
+    "notouch_computed": 0.819596756783893,
+    "notouch_expected": 0.819596756784,
+    "call_computed": 2.80721834150678,
+    "call_expected": 2.807218341507
+  },
+  "check_c_general_vs_equal_slw": [
+    {
+      "T": 0.1,
+      "payoff": "notouch",
+      "equal_slw_closed_form": 0.997987178846555,
+      "general_counting_method": 0.9979871788465594,
+      "abs_diff": 4.440892098500626e-15
+    },
+    {
+      "T": 0.1,
+      "payoff": "call",
+      "equal_slw_closed_form": 2.143428354014145,
+      "general_counting_method": 2.143428354014009,
+      "abs_diff": 1.3633538742396922e-13
+    },
+    {
+      "T": 1.0,
+      "payoff": "notouch",
+      "equal_slw_closed_form": 0.7641756788140011,
+      "general_counting_method": 0.7641756788140338,
+      "abs_diff": 3.275157922644212e-14
+    },
+    {
+      "T": 1.0,
+      "payoff": "call",
+      "equal_slw_closed_form": 2.304342948078164,
+      "general_counting_method": 2.3043429480785576,
+      "abs_diff": 3.934630399271555e-13
+    },
+    {
+      "T": 5.0,
+      "payoff": "notouch",
+      "equal_slw_closed_form": 0.13011783063605764,
+      "general_counting_method": 0.1301178306360437,
+      "abs_diff": 1.3933298959045715e-14
+    },
+    {
+      "T": 5.0,
+      "payoff": "call",
+      "equal_slw_closed_form": 0.3697220635701355,
+      "general_counting_method": 0.36972206357006693,
+      "abs_diff": 6.855627177060342e-14
+    }
+  ]
+}
