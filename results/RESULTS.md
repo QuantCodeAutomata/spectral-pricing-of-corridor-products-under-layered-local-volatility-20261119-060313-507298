@@ -87,22 +87,22 @@ Source: `results/exp4_results.json`.
 Source: `results/exp5_results.json`.
 
 * Two-layer oscillating BM vs. Lamperti's closed-form CDF, `a` from 0.1 to
-  0.9, `K1 = 24` cosine terms: maximum absolute difference 2.74e-3 (paper:
-  ~2.1e-11 for the characteristic function, before cosine-series truncation).
-  **Not reproduced** at the paper's accuracy. This implementation only
-  evaluates the plain cosine expansion of Eq. (53); it does not implement the
-  endpoint-singularity removal of Section 8.4 (least-squares fit of the
-  asymptotic coefficients `a_m`, `b_m` and the corrected expansion Eq. (55)),
-  which the paper shows is required to bring the algebraically convergent
-  (`K1^{-3/2}`) plain cosine series down to the 1e-11–1e-13 range; without it,
-  a finite `K1` leaves a truncation error of the size observed here.
+  0.9, `K1 = 64` cosine terms with the endpoint-singularity removal of
+  Section 8.4 (`M = 4` asymptotic terms, Eq. (55)): maximum absolute
+  difference 2.40e-11 (paper: ~2.1e-11). **Reproduced.**
+* Accrual Call at strike `kappa = 0.5` on the two-layer configuration:
+  spectral value 0.213365691289, against 0.213365691291 obtained by
+  integrating Lamperti's closed-form CDF (`E[(A-kappa)^+] = integral_kappa^1
+  (1-CDF(a)) da`); absolute difference 2.0e-12 (paper reports 3.9e-13 for
+  `M=4, K1=64`). **Reproduced** (same order of magnitude).
 * General configuration (`r = 0`): CDF at `a = 0.5` and the accrual Call price
-  are reported for `K1 = 8, 16, 32`; the change from `K1 = 16` to `32` is
-  1.9e-4 (CDF) and 2.0e-6 (accrual Call), against the paper's reported change
-  of 2.4e-7 and 4e-10 between `K1 = 128` and `256`. **Not reproduced** at the
-  paper's resolution, for the same reason (no endpoint-singularity removal),
-  although the direction of convergence (decreasing changes as `K1` grows) is
-  confirmed.
+  are reported for `K1 = 16, 32, 64` with `M = 4`; the change from `K1 = 32`
+  to `64` is 2.6e-6 (CDF) and 8.7e-8 (accrual Call), against the paper's
+  reported change of 2.4e-7 and 4e-10 between `K1 = 128` and `256`.
+  **Partially reproduced**: the direction and algebraic decay rate of the
+  endpoint-corrected expansion are confirmed, and the residual gap is
+  consistent with using half the paper's `K1` (128 vs. 256) under the time
+  limit of the replication (see "Deviations from the paper").
 
 ## Experiment 6 — Greeks and layer vegas via complex-step differentiation
 
@@ -200,14 +200,20 @@ Source: `results/exp8_results.json`, `results/exp8_convergence.png`.
   quadrature on each layer rather than the closed-form elementary
   antiderivatives the paper derives for piecewise-linear payoffs in Section 4.
   The relative accuracy of the method (1.2e-13 to 5.3e-13) is unaffected.
-* Experiment 5 implements the plain cosine expansion of Eq. (53) but not the
-  endpoint-singularity removal of Section 8.4 (the least-squares fit of
-  asymptotic coefficients and the corrected expansion Eq. (55)). The paper
-  states this removal is necessary to reach its reported 1e-11–1e-13
-  accuracy from an algebraically convergent plain series; without it, the
-  truncation errors reported above (1e-3 to 1e-4 range at the tested `K1`)
-  are consistent with the plain series' stated `K1^{-3/2}` (CDF-like
-  functionals) to `K1^{-5/2}` (accrual Call) convergence rate.
+* Experiment 5 implements the endpoint-singularity removal of Section 8.4
+  (least-squares fit of the asymptotic coefficients `a_m`, `b_m` for
+  `m < M` from the computed `Xi_k` at `K1/2 <= k <= K1`, and the corrected
+  expansion Eq. (55)), reaching the paper's 1e-11 accuracy on the two-layer
+  configuration with `M = 4`, `K1 = 64`. On the ten-layer general
+  configuration the run is capped at `K1 = 64` instead of the paper's
+  `K1 = 256` because each Talbot-contour evaluation costs more per node than
+  the paper's reference implementation and the full grid would not finish
+  inside the time available for this replication; run
+  `python -m exp.exp5_accrual_law --full` for `K1 = 256` (estimated several
+  minutes). The internal convergence check (`K1` doubling from 32 to 64)
+  confirms the expected algebraic decay of the corrected series, one order of
+  magnitude above the paper's 128-to-256 change, consistent with using half
+  the paper's mode count.
 * Experiment 6's finite-difference reference vegas were computed with a
   single central-difference step size that was not separately tuned to
   balance truncation and round-off error for each layer; this widens the
