@@ -1,0 +1,292 @@
+{
+  "resolutions": [
+    100,
+    200,
+    400,
+    800,
+    1600
+  ],
+  "T": 1.0,
+  "table": [
+    {
+      "resolution": 100,
+      "scheme": "fitted",
+      "payoff": "notouch",
+      "price": 0.8195192438976143,
+      "error": -7.751288638568887e-05
+    },
+    {
+      "resolution": 200,
+      "scheme": "fitted",
+      "payoff": "notouch",
+      "price": 0.8195776032306433,
+      "error": -1.915355335668778e-05
+    },
+    {
+      "resolution": 400,
+      "scheme": "fitted",
+      "payoff": "notouch",
+      "price": 0.8195917863514275,
+      "error": -4.970432572526384e-06
+    },
+    {
+      "resolution": 800,
+      "scheme": "fitted",
+      "payoff": "notouch",
+      "price": 0.8195948887385501,
+      "error": -1.8680454498820609e-06
+    },
+    {
+      "resolution": 1600,
+      "scheme": "fitted",
+      "payoff": "notouch",
+      "price": 0.819596288029471,
+      "error": -4.687545289705497e-07
+    },
+    {
+      "resolution": 100,
+      "scheme": "fitted",
+      "payoff": "call",
+      "price": 2.805862930085744,
+      "error": -0.0013554114212559476
+    },
+    {
+      "resolution": 200,
+      "scheme": "fitted",
+      "payoff": "call",
+      "price": 2.806900798043586,
+      "error": -0.0003175434634137275
+    },
+    {
+      "resolution": 400,
+      "scheme": "fitted",
+      "payoff": "call",
+      "price": 2.8071370690620636,
+      "error": -8.127244493616459e-05
+    },
+    {
+      "resolution": 800,
+      "scheme": "fitted",
+      "payoff": "call",
+      "price": 2.8071962597853464,
+      "error": -2.2081721653410824e-05
+    },
+    {
+      "resolution": 1600,
+      "scheme": "fitted",
+      "payoff": "call",
+      "price": 2.8072128000864054,
+      "error": -5.541420594390445e-06
+    },
+    {
+      "resolution": 100,
+      "scheme": "naive",
+      "payoff": "notouch",
+      "price": 0.820509850684189,
+      "error": 0.0009130939001890104
+    },
+    {
+      "resolution": 200,
+      "scheme": "naive",
+      "payoff": "notouch",
+      "price": 0.8197917431190992,
+      "error": 0.00019498633509917873
+    },
+    {
+      "resolution": 400,
+      "scheme": "naive",
+      "payoff": "notouch",
+      "price": 0.8197043610007523,
+      "error": 0.00010760421675226617
+    },
+    {
+      "resolution": 800,
+      "scheme": "naive",
+      "payoff": "notouch",
+      "price": 0.8196509830755148,
+      "error": 5.422629151474734e-05
+    },
+    {
+      "resolution": 1600,
+      "scheme": "naive",
+      "payoff": "notouch",
+      "price": 0.8196239760607744,
+      "error": 2.7219276774403944e-05
+    },
+    {
+      "resolution": 100,
+      "scheme": "naive",
+      "payoff": "call",
+      "price": 2.807239527124417,
+      "error": 2.1185617417263103e-05
+    },
+    {
+      "resolution": 200,
+      "scheme": "naive",
+      "payoff": "call",
+      "price": 2.8014552001426223,
+      "error": -0.0057631413643775
+    },
+    {
+      "resolution": 400,
+      "scheme": "naive",
+      "payoff": "call",
+      "price": 2.801075532416891,
+      "error": -0.006142809090108781
+    },
+    {
+      "resolution": 800,
+      "scheme": "naive",
+      "payoff": "call",
+      "price": 2.8041646550028947,
+      "error": -0.003053686504105091
+    },
+    {
+      "resolution": 1600,
+      "scheme": "naive",
+      "payoff": "call",
+      "price": 2.8056959423408014,
+      "error": -0.0015223991661983405
+    }
+  ],
+  "convergence_orders": [
+    {
+      "scheme": "fitted",
+      "payoff": "notouch",
+      "n_from": 100,
+      "n_to": 200,
+      "order": 2.016824110954834
+    },
+    {
+      "scheme": "fitted",
+      "payoff": "notouch",
+      "n_from": 200,
+      "n_to": 400,
+      "order": 1.946168746082556
+    },
+    {
+      "scheme": "fitted",
+      "payoff": "notouch",
+      "n_from": 400,
+      "n_to": 800,
+      "order": 1.411841857271199
+    },
+    {
+      "scheme": "fitted",
+      "payoff": "notouch",
+      "n_from": 800,
+      "n_to": 1600,
+      "order": 1.9946250219269661
+    },
+    {
+      "scheme": "fitted",
+      "payoff": "call",
+      "n_from": 100,
+      "n_to": 200,
+      "order": 2.0937048555435815
+    },
+    {
+      "scheme": "fitted",
+      "payoff": "call",
+      "n_from": 200,
+      "n_to": 400,
+      "order": 1.9661158717766805
+    },
+    {
+      "scheme": "fitted",
+      "payoff": "call",
+      "n_from": 400,
+      "n_to": 800,
+      "order": 1.8799136361978213
+    },
+    {
+      "scheme": "fitted",
+      "payoff": "call",
+      "n_from": 800,
+      "n_to": 1600,
+      "order": 1.9945248826051771
+    },
+    {
+      "scheme": "naive",
+      "payoff": "notouch",
+      "n_from": 100,
+      "n_to": 200,
+      "order": 2.227390209287336
+    },
+    {
+      "scheme": "naive",
+      "payoff": "notouch",
+      "n_from": 200,
+      "n_to": 400,
+      "order": 0.8576384067613416
+    },
+    {
+      "scheme": "naive",
+      "payoff": "notouch",
+      "n_from": 400,
+      "n_to": 800,
+      "order": 0.988670200497693
+    },
+    {
+      "scheme": "naive",
+      "payoff": "notouch",
+      "n_from": 800,
+      "n_to": 1600,
+      "order": 0.994363774720036
+    },
+    {
+      "scheme": "naive",
+      "payoff": "call",
+      "n_from": 100,
+      "n_to": 200,
+      "order": NaN
+    },
+    {
+      "scheme": "naive",
+      "payoff": "call",
+      "n_from": 200,
+      "n_to": 400,
+      "order": -0.09204313896395117
+    },
+    {
+      "scheme": "naive",
+      "payoff": "call",
+      "n_from": 400,
+      "n_to": 800,
+      "order": 1.0083465864930612
+    },
+    {
+      "scheme": "naive",
+      "payoff": "call",
+      "n_from": 800,
+      "n_to": 1600,
+      "order": 1.0042052839907825
+    }
+  ],
+  "richardson_extrapolation": {
+    "notouch": {
+      "n_second_finest": 800,
+      "n_finest": 1600,
+      "v_second_finest": 0.8195948887385501,
+      "v_finest": 0.819596288029471,
+      "v_extrapolated": 0.819596754459778,
+      "spectral_ref": 0.819596756784,
+      "diff_vs_ref": -2.324222037053403e-09
+    },
+    "call": {
+      "n_second_finest": 800,
+      "n_finest": 1600,
+      "v_second_finest": 2.8071962597853464,
+      "v_finest": 2.8072128000864054,
+      "v_extrapolated": 2.807218313520092,
+      "spectral_ref": 2.807218341507,
+      "diff_vs_ref": -2.798690790228875e-08
+    }
+  },
+  "timings_seconds": {
+    "fitted_notouch": 0.18793344497680664,
+    "fitted_call": 0.1715843677520752,
+    "naive_notouch": 0.16974449157714844,
+    "naive_call": 0.17088842391967773
+  }
+}

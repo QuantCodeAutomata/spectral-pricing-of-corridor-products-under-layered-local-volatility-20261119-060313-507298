@@ -150,6 +150,17 @@ def _cn_from_pieces(basis: EigenBasis, model: LayeredModel, pieces) -> np.ndarra
     return cn
 
 
+def _rate_for_bucket(rate_by_layer, k: int) -> np.ndarray:
+    """``rate_by_layer`` is either one array shared by every bucket (for a
+    running-reward rate that does not depend on time, e.g. the corridor
+    occupation indicator) or a list with one array per bucket (for a rate
+    that follows the bucket's own time-varying volatility, e.g. the
+    log-return quadratic-variation rate g_i = varsigma_{i,k}^2)."""
+    if isinstance(rate_by_layer, (list, tuple)):
+        return rate_by_layer[k]
+    return rate_by_layer
+
+
 def stationary_solution(bucket: Bucket, r: float, rate_by_layer: np.ndarray) -> np.ndarray:
     """Omega_k^infty expanded in bucket k's own eigenbasis: the resolvent
     solution of (A_k - r) Omega = -g with absorbing boundaries,
@@ -163,6 +174,11 @@ def stationary_solution(bucket: Bucket, r: float, rate_by_layer: np.ndarray) -> 
     pieces = running_reward_pieces(bucket.model, rate_by_layer)
     cg = _cn_from_pieces(bucket.basis, bucket.model, pieces)
     return cg / ((bucket.basis.mu + r) * bucket.basis.norm2)
+
+
+def _stationary_solutions(buckets: list[Bucket], r: float, rate_by_layer) -> list[np.ndarray]:
+    return [stationary_solution(b, r, _rate_for_bucket(rate_by_layer, k))
+            for k, b in enumerate(buckets)]
 
 
 def bucket_recursion_running(buckets: list[Bucket], r: float, rate_by_layer: np.ndarray,
@@ -185,7 +201,7 @@ def bucket_recursion_running(buckets: list[Bucket], r: float, rate_by_layer: np.
     V(0, S_star) = Omega_1^infty(S_star) + sum_m z_m^{(1)} phi_m^{(1)}(S_star).
     """
     K_buckets = len(buckets)
-    omegas = [stationary_solution(b, r, rate_by_layer) for b in buckets]
+    omegas = _stationary_solutions(buckets, r, rate_by_layer)
     E_last = np.exp(-(r + buckets[-1].basis.mu) * buckets[-1].dt)
     z = -E_last * omegas[-1]
     for k in range(K_buckets - 2, -1, -1):

@@ -24,10 +24,14 @@ The two FD schemes below therefore discretize in the scale coordinate x:
   layer's p_m = sigma_m^2 and matched at the node (finite-volume treatment of
   a discontinuous coefficient, Section 11) -- a cell-width-weighted harmonic
   averaging of p (equivalently, of varsigma^{-2}) across the interface.
-* "naive": a uniform grid over [y_0, y_N], sampling varsigma at each node's
-  own layer and mapping to price coordinates for the payoff, with a plain
-  constant-step central difference that ignores the exact interface location
-  whenever a node does not coincide with a breakpoint.
+* "naive": a uniform grid over the price domain [B_-, B_+] = [Y_0, Y_N]
+  (Section 11, implementation_notes: "construct a uniform spatial grid over
+  [B_-, B_+] with n intervals ... sample varsigma at the grid nodes"),
+  discretizing the original driftless local-volatility PDE
+  dV/dt + (1/2) varsigma(S)^2 V_SS - r V = 0 directly in S with a plain
+  constant-step central difference, sampling varsigma(S) at each node's own
+  layer and ignoring the exact interface location whenever a node does not
+  coincide with a breakpoint.
 
 Both march with Crank-Nicolson, preceded by ``FD_RANNACHER_HALF_STEPS`` half
 steps of implicit Euler (Rannacher smoothing) to damp the initial payoff
@@ -84,13 +88,14 @@ def fitted_grid(model: LayeredModel, n_total: int) -> tuple[np.ndarray, np.ndarr
 
 
 def naive_grid(model: LayeredModel, n_total: int) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Uniform grid in scale space over [y_0, y_N], sigma sampled at each
-    node's own layer. Returns ``x``, ``S = Phi^{-1}(x)`` and ``sigma_node``."""
-    x = np.linspace(model.y[0], model.y[-1], n_total + 1)
-    layer_at_node = _layer_of(model.y, x)
-    sigma_node = np.real(model.sigma)[layer_at_node]
-    S = _x_to_price(model, x)
-    return x, S, sigma_node
+    """Uniform grid in the physical price domain [Y_0, Y_N] = [B_-, B_+]
+    (Section 11, implementation_notes), varsigma sampled at each node's own
+    layer. Returns ``S`` (the grid, used both as PDE coordinate and payoff
+    coordinate here), ``S`` again, and ``varsigma_node``."""
+    S = np.linspace(model.Y[0], model.Y[-1], n_total + 1)
+    layer_at_node = _layer_of(model.Y, S)
+    varsigma_node = np.real(model.varsigma)[layer_at_node]
+    return S, S, varsigma_node
 
 
 def _build_generator_fitted(x: np.ndarray, p_cell: np.ndarray, r: float) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
@@ -124,16 +129,22 @@ def _build_generator_fitted(x: np.ndarray, p_cell: np.ndarray, r: float) -> tupl
     return sub, diag, sup
 
 
-def _build_generator_naive(x: np.ndarray, sigma_node: np.ndarray, r: float) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Plain constant-step central difference in scale space, p = sigma^2
-    sampled at the node itself (non-conservative: ignores the true interface
-    location between nodes)."""
-    h = x[1] - x[0]
-    n = len(x)
-    p = sigma_node**2
-    sub = p[:-2] / h**2
-    sup = p[2:] / h**2
-    diag = -2.0 * p[1:-1] / h**2 - r
+def _build_generator_naive(S: np.ndarray, varsigma_node: np.ndarray, r: float) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Plain constant-step central difference of the original PDE
+    dV/dt + (1/2) varsigma(S)^2 V_SS - r V = 0 directly in the physical price
+    coordinate S, with varsigma sampled at each node's own layer
+    (non-conservative: ignores the true interface location between nodes).
+    The node's own coefficient p_i = (1/2) varsigma_i^2 is substituted
+    directly into the constant-coefficient three-point Laplacian
+    p_i*(V_{i+1}-2V_i+V_{i-1})/h^2, rather than the flux-conservative
+    averaging of the fitted scheme; this is what "sampling varsigma at the
+    nodes" means operationally and is what the paper contrasts with the
+    fitted scheme's harmonic-mean interface treatment (Section 11)."""
+    p = 0.5 * varsigma_node[1:-1] ** 2
+    h = S[1] - S[0]
+    sub = p / h**2
+    sup = p / h**2
+    diag = -2.0 * p / h**2 - r
     return sub, diag, sup
 
 
@@ -171,9 +182,11 @@ def crank_nicolson_price(model: LayeredModel, S_star: float, T: float, r: float,
     if scheme == "fitted":
         x, S, p_cell = fitted_grid(model, n_total)
         sub, diag, sup = _build_generator_fitted(x, p_cell, r)
+        pos, pos_star = x, float(np.real(scale_transform_point(model, S_star)))
     elif scheme == "naive":
-        x, S, sigma_node = naive_grid(model, n_total)
-        sub, diag, sup = _build_generator_naive(x, sigma_node, r)
+        x, S, varsigma_node = naive_grid(model, n_total)
+        sub, diag, sup = _build_generator_naive(x, varsigma_node, r)
+        pos, pos_star = x, S_star  # naive solves directly in price space S
     else:
         raise ValueError(f"unknown scheme {scheme!r}")
 
@@ -186,8 +199,7 @@ def crank_nicolson_price(model: LayeredModel, S_star: float, T: float, r: float,
     for _ in range(n_steps - n_rannacher):
         V_int = _cn_step(sub, diag, sup, V_int, dt, theta=0.5)
     V_full = np.concatenate(([0.0], V_int, [0.0]))
-    x0 = float(np.real(scale_transform_point(model, S_star)))
-    return float(np.interp(x0, x, V_full))
+    return float(np.interp(pos_star, pos, V_full))
 
 
 def _terminal_payoff(S: np.ndarray, payoff: str, K: float | None) -> np.ndarray:

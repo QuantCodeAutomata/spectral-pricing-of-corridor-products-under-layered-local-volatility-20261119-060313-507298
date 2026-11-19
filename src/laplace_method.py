@@ -69,6 +69,56 @@ def solve_tridiagonal(diag: np.ndarray, off: np.ndarray, rhs: np.ndarray) -> np.
     return solve_banded((1, 1), ab, rhs)
 
 
+def solve_tridiagonal_batch(diag: np.ndarray, off: np.ndarray, rhs: np.ndarray) -> np.ndarray:
+    """Vectorized Thomas algorithm solving a batch of B independent symmetric
+    tridiagonal systems simultaneously: one system per contour node z of a
+    Laplace inversion, so that Eq. (27) is solved at every node of the
+    rectangle contour (Section 8.3) with B-wide numpy operations rather than
+    with a Python loop over nodes (the number of interior interfaces N-1 is
+    small, so the loop below runs over N-1 steps, not over the batch).
+
+    diag: (B, n) complex, off: (B, n-1) complex, rhs: (B, n) complex -> (B, n).
+    """
+    B, n = diag.shape
+    if n == 0:
+        return np.zeros((B, 0), dtype=complex)
+    if n == 1:
+        return rhs / diag
+    c = np.zeros((B, n - 1), dtype=complex)
+    d = np.zeros((B, n), dtype=complex)
+    c[:, 0] = off[:, 0] / diag[:, 0]
+    d[:, 0] = rhs[:, 0] / diag[:, 0]
+    for i in range(1, n):
+        m = diag[:, i] - off[:, i - 1] * c[:, i - 1]
+        if i < n - 1:
+            c[:, i] = off[:, i] / m
+        d[:, i] = (rhs[:, i] - off[:, i - 1] * d[:, i - 1]) / m
+    x = np.zeros((B, n), dtype=complex)
+    x[:, -1] = d[:, -1]
+    for i in range(n - 2, -1, -1):
+        x[:, i] = d[:, i] - c[:, i] * x[:, i + 1]
+    return x
+
+
+def interface_matrix_batch(model: LayeredModel, nu_batch: np.ndarray):
+    """Batched counterpart of ``interface_matrix``: nu_batch has shape (B, N),
+    one (possibly layer-dependent) nu_i vector per contour node. Returns
+    diag (B, N-1), off (B, N-2), Eq. (27) evaluated at every node at once."""
+    sigma = model.sigma
+    omega = model.omega
+    arg = omega[None, :] * nu_batch
+    coth = _coth(arg)
+    csch = _csch(arg)
+    diag = (sigma[:-1][None, :] * nu_batch[:, :-1] * coth[:, :-1]
+            + sigma[1:][None, :] * nu_batch[:, 1:] * coth[:, 1:])
+    N = model.N
+    if N > 2:
+        off = -sigma[1:-1][None, :] * nu_batch[:, 1:-1] * csch[:, 1:-1]
+    else:
+        off = np.zeros((nu_batch.shape[0], 0), dtype=complex)
+    return diag, off
+
+
 def source_layer_terms(model: LayeredModel, x0: float):
     """Layer index j (0-based) containing x0, plus gamma1=(y_j-x0)/ell_j and
     gamma2=(x0-y_{j-1})/ell_j (Proposition 3)."""

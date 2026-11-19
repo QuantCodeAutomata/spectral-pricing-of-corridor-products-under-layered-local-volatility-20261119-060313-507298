@@ -1,0 +1,50 @@
+{
+  "executed_configuration": {
+    "n_buckets": 12,
+    "log_inv_eps_run": 20.0,
+    "mode_counts_per_bucket": [
+      25,
+      25,
+      26,
+      27,
+      27,
+      28,
+      29,
+      29,
+      30,
+      31,
+      32,
+      33
+    ],
+    "terminal_payoffs_time_s": 2.9866378650003753,
+    "running_rewards_time_s": 0.49102571299954434
+  },
+  "tiled_surface": {
+    "call_price": 2.7457782018071493,
+    "notouch_price": 0.8159150345388744,
+    "expected_accrual": 0.3876761140450349,
+    "corridor_variance": 39.70739346158639,
+    "call_expected_paper": 2.7457782018,
+    "notouch_expected_paper": 0.8159150345,
+    "accrual_expected_paper": 0.38759685,
+    "corridor_variance_expected_paper": 39.6971363,
+    "call_abs_diff": 7.149392189376158e-12,
+    "notouch_abs_diff": 3.8874348184947394e-11,
+    "accrual_abs_diff": 7.926404503488804e-05,
+    "corridor_variance_abs_diff": 0.010257161586395114
+  },
+  "check_a_time_homogeneous": {
+    "call_single_bucket": 2.807218341507585,
+    "call_identical_buckets": 2.807218341506644,
+    "abs_diff": 9.410250356722827e-13,
+    "expected_abs_diff_paper": 4.4e-15
+  },
+  "check_b_internal_convergence": {
+    "log_inv_eps_run": 20.0,
+    "log_inv_eps_full": 90.0,
+    "call_run": 2.7457782018071493,
+    "call_full": 2.7457782018068633,
+    "abs_diff": 2.859934511434403e-13,
+    "expected_abs_diff_paper": 9.3e-15
+  }
+}

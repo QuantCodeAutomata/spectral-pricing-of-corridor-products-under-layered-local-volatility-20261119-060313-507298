@@ -236,7 +236,7 @@ def greeks_eigen_expansion(basis: EigenBasis, model: LayeredModel, x0: float, T:
     Gamma = -2/varsigma_j^2 * e^{-rT} sum_n mu_n e^{-mu_n T} phi_n(x0) c_n / ||phi_n||^2
           = (1/2 varsigma_j^2)^{-1} * (r*V - Theta)   [cross-check identity]
     """
-    j = model.layer_of(S_star)
+    j = model.layer_of_price(S_star)
     varsigma_j = np.real(model.varsigma[j])
     phi0 = eval_phi(basis, model, x0, order=0)
     dphi0 = eval_phi(basis, model, x0, order=1)

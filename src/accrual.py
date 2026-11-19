@@ -23,6 +23,7 @@ import numpy as np
 from src.spectral_core import LayeredModel
 from src.laplace_method import (
     talbot_nodes, _gauss_legendre_integral, laplace_density,
+    solve_tridiagonal_batch, interface_matrix_batch, source_layer_terms,
 )
 
 
@@ -45,6 +46,52 @@ def integrated_density(model: LayeredModel, nu, x0: float, n_quad: int = 32) -> 
             return laplace_density(model, nu, x0, x)
 
         total += _gauss_legendre_integral(integrand, y_lo, y_hi, n_quad)
+    return total
+
+
+def integrated_density_batch(model: LayeredModel, nu_batch: np.ndarray, x0: float,
+                              n_quad: int = 32) -> np.ndarray:
+    """Batched counterpart of ``integrated_density``: nu_batch has shape (B, N),
+    one set of per-layer nu_i values per contour node z_k (Eq. 52). The
+    tridiagonal system is solved once for all B nodes simultaneously
+    (``solve_tridiagonal_batch``) and every layer's Gauss-Legendre quadrature
+    is evaluated for the whole batch at once, instead of solving the system
+    and integrating node by node."""
+    B, N = nu_batch.shape
+    diag, off = interface_matrix_batch(model, nu_batch)
+    j, gamma1, gamma2 = source_layer_terms(model, x0)
+    rhs = np.zeros((B, N - 1), dtype=complex)
+    nu_j = nu_batch[:, j]
+    sinh_arg_j = np.sinh(model.omega[j] * nu_j)
+    if j - 1 >= 0:
+        rhs[:, j - 1] += np.sinh(model.omega[j] * nu_j * gamma1) / sinh_arg_j
+    if j <= N - 2:
+        rhs[:, j] += np.sinh(model.omega[j] * nu_j * gamma2) / sinh_arg_j
+    g = solve_tridiagonal_batch(diag, off, rhs) if N > 1 else np.zeros((B, 0), dtype=complex)
+    g_full = np.concatenate([np.zeros((B, 1), dtype=complex), g, np.zeros((B, 1), dtype=complex)], axis=1)
+
+    nodes, weights = np.polynomial.legendre.leggauss(n_quad)
+    total = np.zeros(B, dtype=complex)
+    x0r = np.real(x0)
+    for m in range(N):
+        y_lo, y_hi = model.y[m], model.y[m + 1]
+        xq = 0.5 * (y_hi - y_lo) * nodes + 0.5 * (y_hi + y_lo)
+        wq = 0.5 * (y_hi - y_lo) * weights
+        nu_m = nu_batch[:, m]
+        k_m = nu_m / model.sigma[m]
+        ell_m = model.ell[m]
+        s_left = xq - y_lo
+        s_right = y_hi - xq
+        denom = np.sinh(k_m * ell_m)
+        contrib = (g_full[:, m][:, None] * np.sinh(k_m[:, None] * s_right[None, :])
+                   + g_full[:, m + 1][:, None] * np.sinh(k_m[:, None] * s_left[None, :])) / denom[:, None]
+        if m == j:
+            lo = np.minimum(xq, x0r)
+            hi = np.maximum(xq, x0r)
+            Hj = (np.sinh(k_m[:, None] * (lo[None, :] - y_lo)) * np.sinh(k_m[:, None] * (y_hi - hi[None, :]))
+                  / (k_m[:, None] * model.sigma[m] ** 2 * denom[:, None]))
+            contrib = contrib + Hj
+        total += contrib @ wq
     return total
 
 
@@ -113,11 +160,31 @@ def accrual_characteristic(model: LayeredModel, corridor_mask: np.ndarray, T: fl
     """
     z, w = rectangle_contour_nodes(u, T)
     q = np.where(corridor_mask, -1j * u * beta_scale, 0.0)
-    out = np.zeros_like(z)
-    for ik, lam in enumerate(z):
-        nu = np.sqrt(lam + q)
-        out[ik] = integrated_density(model, nu, x0, n_quad=n_quad)
+    nu_batch = np.sqrt(z[:, None] + q[None, :])
+    out = integrated_density_batch(model, nu_batch, x0, n_quad=n_quad)
     return np.sum(w * out)
+
+
+def characteristic_array(model: LayeredModel, corridor_mask: np.ndarray, T: float,
+                          x0: float, K1: int, n_talbot: int = 48,
+                          n_quad: int = 32) -> np.ndarray:
+    """Xi(k*pi/T) for k = 0,...,K1, Eq. (51), computed once so that every cosine
+    coefficient G_k (one per payoff) and every truncation K1' <= K1 can reuse
+    the same, expensive, characteristic-function evaluations (Eq. 53)."""
+    Xi = np.empty(K1 + 1, dtype=complex)
+    for k in range(K1 + 1):
+        u_k = k * np.pi / T
+        Xi[k] = accrual_characteristic(model, corridor_mask, T, u_k, x0,
+                                        n_talbot=n_talbot, n_quad=n_quad)
+    return Xi
+
+
+def price_from_characteristic(Xi: np.ndarray, G: np.ndarray) -> float:
+    """E[g_p(alpha); T<tau] = (1/2)*G_0*Xi(0) + sum_{k=1}^{K1} G_k*Re(Xi(k*pi/T)),
+    Eq. (53), from a precomputed characteristic array and a payoff's cosine
+    coefficients G (both truncated consistently at the same K1)."""
+    K1 = len(G) - 1
+    return 0.5 * G[0] * np.real(Xi[0]) + float(np.dot(G[1:K1 + 1], np.real(Xi[1:K1 + 1])))
 
 
 def cosine_modes_cdf(a_target: float, K1: int) -> np.ndarray:
